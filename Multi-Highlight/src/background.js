@@ -252,18 +252,29 @@ function handle_blacklist_change(newBlacklist) {
 
 
 // handle message
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action === "getTabId") {
-        sendResponse({tabId: sender.tab.id});
-    } else if (request.action === "handle_addKw_change") {
-        handle_addKw_change(request.enableIt);
-    } else if (request.action === "handle_removeKw_change") {
-        handle_removeKw_change(request.enableIt);
-    } else if (request.action === "handle_popupSize_change") {
-        handle_popupSize_change(request.newHeight, request.newWidth);
-    } else if (request.action === "handle_blacklist_change") {
-        handle_blacklist_change(request.newBlacklist);
-    }
+// In background script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "analyze") {
+      // Process the analysis request
+      const pageContent = request.pageContent;
+      
+      // Call your analysis function
+      analyzeForCooptation(pageContent)
+          .then(terms => {
+              sendResponse({
+                  success: true,
+                  terms: terms
+              });
+          })
+          .catch(error => {
+              sendResponse({
+                  success: false,
+                  error: error.message
+              });
+          });
+      
+      return true; // Indicates we'll send response asynchronously
+  }
 });
 
 
