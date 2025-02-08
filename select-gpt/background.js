@@ -40,8 +40,8 @@ const getResponse = async (userText) => {
             const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
                 headers: {
-                    "Authorization": "Bearer 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",
-                    "HTTP-Referer": "YOUR_SITE_URL",
+                    "Authorization": "Bearer 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",
+                    "HTTP-Referer": "",
                     "X-Title": "select-gpt",
                     "Content-Type": "application/json"
                 },

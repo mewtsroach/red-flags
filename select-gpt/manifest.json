@@ -1,12 +1,12 @@
 {
     "manifest_version": 3,
-    "name": "select-gpt",
-    "description": "A chrome extension that lets you select any text and run it through ChatGPT",
+    "name": "red-flags",
+    "description": "A chrome extension that lets you run any text through for cooptation",
     "version": "1.0.0",
     "host_permissions": ["https://*.openai.com/"],
     "permissions": ["storage", "tabs", "activeTab"],
     "icons": {
-        "512": "assets/icons/hexagonal.png"
+        "512": "assets/imgs/redflag.png"
     },
     "action": {
         "default_popup": "popup.html"
