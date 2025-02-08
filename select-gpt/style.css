@@ -121,3 +121,13 @@ a:hover {
     pointer-events: none;
     margin: 0;
 }
+
+/* Add these styles at the end of the file */
+.select-gpt-popup {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
