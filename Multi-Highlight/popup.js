@@ -28,6 +28,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
             console.log('Found active tab:', tab);
 
+            // Inject content script if needed
+            try {
+                await chrome.scripting.executeScript({
+                    target: { tabId: tab.id },
+                    files: ['content-script.js']
+                });
+                console.log('Content script injected');
+
+                await chrome.scripting.insertCSS({
+                    target: { tabId: tab.id },
+                    files: ['styles.css']
+                });
+                console.log('Styles injected');
+            } catch (e) {
+                console.log('Script injection note:', e);
+            }
+
             // Send analysis request
             const message = {
                 action: "analyze",
@@ -38,39 +55,33 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             
             console.log('Sending message:', message);
-            chrome.tabs.sendMessage(tab.id, message, response => {
-                console.log('Got response:', response);
-                if (chrome.runtime.lastError) {
-                    console.error('Error:', chrome.runtime.lastError);
-                    updateStatus('Error: Content script not ready. Please refresh the page.');
-                    button.disabled = false;
-                    return;
-                }
-                
-                if (response?.status === 'processing') {
-                    updateStatus('Analysis in progress...');
-                }
-            });
+            const response = await chrome.tabs.sendMessage(tab.id, message);
+            console.log('Got response:', response);
+
+            if (response?.status === 'processing') {
+                updateStatus('Analysis in progress...');
+            }
 
         } catch (error) {
             console.error('Error:', error);
             updateStatus('Error: ' + error.message);
+        } finally {
             button.disabled = false;
         }
     });
 
     // Listen for analysis completion
     chrome.runtime.onMessage.addListener((message) => {
-        console.log('Received message:', message);
-        if (message.action === 'analysisComplete') {
-            if (message.success) {
-                updateStatus(`Analysis complete! Found ${message.count} terms.`);
-            } else {
-                updateStatus('Error: ' + (message.error || 'Unknown error'));
-            }
-            button.disabled = false;
-        }
-    });
+      console.log('Received message:', message);
+      if (message.action === 'analysisComplete') {
+          if (message.success) {
+              updateStatus(`Analysis complete! Found ${message.count} terms.`);
+          } else {
+              updateStatus('Error: ' + (message.error || 'Unknown error'));
+          }
+          button.disabled = false;
+      }
+  });
 
     function updateStatus(message) {
         console.log('Status update:', message);
