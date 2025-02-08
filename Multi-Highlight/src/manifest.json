@@ -39,13 +39,14 @@
   },
   "options_page": "options/options.html",
   "permissions": [
-  "activeTab", 
-  "storage", 
-  "contextMenus",
-  "scripting"
+    "activeTab", 
+    "storage", 
+    "contextMenus",
+    "scripting"
   ],
   "host_permissions": [
     "https://*/*",
-    "http://*/*"
+    "http://*/*",
+    "https://openrouter.ai/*"
   ]
 }

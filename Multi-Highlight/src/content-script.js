@@ -1,6 +1,6 @@
 // content-script.js
-const API_ENDPOINT = 'YOUR_API_ENDPOINT'; // Replace with your LLM API endpoint
-const API_KEY = 'YOUR_API_KEY'; // Replace with your API key
+const API_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
+const API_KEY = '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'; // Replace with your OpenRouter API key
 
 // Listen for new page loads
 chrome.runtime.onMessage.addListener(async function(request, sender, sendResponse) {
@@ -17,19 +17,24 @@ async function analyzeForCooptation(content) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${API_KEY}`
+                'Authorization': `Bearer ${API_KEY}`,
+                'HTTP-Referer': 'https://github.com/yourusername/yourrepo', // Replace with your project URL
+                'X-Title': 'Multi-Highlight Extension' // Your application name
             },
             body: JSON.stringify({
-                prompt: `Analyze the following text and return a JSON array of words or phrases that represent examples of cooptation (where terms or concepts have been appropriated or repurposed from their original meaning or context): ${content}`,
-                max_tokens: 500,
+                model: 'deepseek-ai/deepseek-coder-33b-instruct',
+                messages: [{
+                    role: 'user',
+                    content: `Analyze the following text and return a JSON array of words or phrases that represent examples of cooptation (where terms or concepts have been appropriated or repurposed from their original meaning or context). Return ONLY the JSON array, nothing else: ${content}`
+                }],
                 temperature: 0.3
             })
         });
 
         const data = await response.json();
-        // Parse the LLM response to extract the array of words
-        // The exact parsing will depend on your LLM's response format
-        return JSON.parse(data.choices[0].text);
+        // OpenRouter response format is different, accessing the content
+        const responseText = data.choices[0].message.content;
+        return JSON.parse(responseText);
     } catch (error) {
         console.error('Error analyzing content:', error);
         return [];
