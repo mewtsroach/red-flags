@@ -4,27 +4,45 @@
 }
 
 body {
-    background-color: #353441;
+    background-color: #c35467;
     font-family: proxima-nova;
-    width:400px;
-    height:400px;
+    width: 400px;
+    padding: 20px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+    border-radius: 10px;
+}
+
+.content-container {
+    width: 100%;
+    max-width: 370px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 h1 {
-    color: #fff
+    color: #fff;
+    margin: 0;
+    align-self: flex-start;
+    font-size: 28px;
 }
 
 .editable {
     font-family: proxima-nova;
     resize: none;
-    background-color: #454754;
-    color: #D1D5CA;
-    font-size: 3.75vh;
-    width: 94vw;
+    background-color: #e99aa0;
+    color: #fff;
+    font-size: 6.75vh;
+    width: 100%;
     border: 0px;
-    border-radius: 2px;
-    padding: 1vw;
-    overflow-y: scroll;
+    border-radius: 10px;
+    padding: 15px;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 .editable:empty:before {
@@ -36,19 +54,70 @@ h1 {
     width: 0 !important
 }
 
-#input {
-    height: 60px
+#input-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    width: 100%;
+}
+
+#input, #output {
+    height: 60px;
+    width: 100%;
 }
 
 #output {
-    height: 270px;
+    height: 60px; /* Fixed initial height */
+    min-height: 60px; /* Ensures minimum height matches input */
+    max-height: 200px; /* Allows growth but limits it */
+    overflow-y: auto; /* Enables scrolling when content exceeds height */
+}
+
+/* Container for all content */
+.content-container {
+    width: 90%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
 }
 
 a {
     text-decoration: none;
-    color: #16e16e;
+    color: #e99aa0;
 }
 
 a:hover {
     cursor: pointer;
+}
+
+#button-container {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+#submit-btn {
+    background-color: #e99aa0;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: proxima-nova;
+}
+
+#submit-btn:hover {
+    background-color: #b07177;
+}
+
+#submit-btn:disabled {
+    background-color: #454754;
+    cursor: not-allowed;
+}
+
+.invisible-spacer {
+    color: transparent;
+    user-select: none;
+    pointer-events: none;
+    margin: 0;
 }

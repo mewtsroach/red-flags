@@ -31,73 +31,46 @@ const uid = () => {
     return generate()
 };
 
-const getToken = async () => {
-    return new Promise(async (resolve, reject) => {
-        const resp = await fetch("https://chat.openai.com/api/auth/session")
-        if (resp.status === 403) {
-            reject('CLOUDFLARE')
-        }
-        try {
-            const data = await resp.json()
-            if (!data.accessToken) {
-                reject('ERROR')
-            }
-            resolve(data.accessToken)
-        } catch (err) {
-            reject('ERROR')
-        }
-    })
-}
-
-const getResponse = async (question) => {
+const getResponse = async (userText) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const accessToken = await getToken();
-            const res = await fetch("https://chat.openai.com/backend-api/conversation", {
+            // Format the prompt with the user's text
+            const formattedPrompt = `Analyze this text and identify objectively whether or not is CO-OPTATION "${userText}". Please provide a clear answer and use very simple language.`
+            
+            const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "Bearer " + accessToken,
+                    "Authorization": "Bearer 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",
+                    "HTTP-Referer": "YOUR_SITE_URL",
+                    "X-Title": "select-gpt",
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    action: "next",
+                    model: "deepseek/deepseek-r1-distill-llama-70b:free",
                     messages: [
                         {
-                            id: uid(),
                             role: "user",
-                            content: {
-                                content_type: "text",
-                                parts: [question]
-                            }
+                            content: formattedPrompt
                         }
-                    ],
-                    model: "text-davinci-002-render",
-                    parent_message_id: uid()
+                    ]
                 })
-            })   
-            resolve(res.body)
-        } catch (e) {
-            if (e === "CLOUDFLARE") {
-                reject("CLOUDFLARE")
-            } else {
-                reject("ERROR")
+            })
+            const data = await res.json()
+            if (data.error) {
+                reject(data.error.message)
             }
+            resolve(data.choices[0].message.content)
+        } catch (e) {
+            reject("Error connecting to OpenRouter API. Please try again.")
         }
     })
 }
 
 chrome.runtime.onConnect.addListener((port) => {
     port.onMessage.addListener((msg) => {
-        const question = msg.question
-        getResponse(question).then(async answer => {
-            const resRead = answer.getReader()
-            while (true) {
-                const {done, value} = await resRead.read()
-                if (done) break
-                if (done === undefined || value === undefined) port.postMessage('ERROR')
-                const data = new TextDecoder().decode(value)
-                port.postMessage(data)
-            }
+        const userText = msg.question
+        getResponse(userText).then(answer => {
+            port.postMessage(answer)
         }).catch((e) => port.postMessage(e))
     })
 })
