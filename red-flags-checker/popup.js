@@ -30,7 +30,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('output').style.opacity = 0.5
             document.getElementById('output').innerHTML = "Loading..."
             submitBtn.disabled = true
-            const port = chrome.runtime.connect();
+
+            // Add sparkle class to trigger the animation
+            submitBtn.classList.add('sparkle')
+
+            // Remove the sparkle class after the animation ends
+            setTimeout(() => {
+                submitBtn.classList.remove('sparkle')
+            }, 1000)
+
+            const port = chrome.runtime.connect()
             port.postMessage({question: text})
             port.onMessage.addListener((msg) => {
                 showPopup(msg)
