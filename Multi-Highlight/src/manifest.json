@@ -1,25 +1,27 @@
 {
-  "manifest_version": 3,
-  "name": "Cooptation Highlighter",
-  "version": "1.0",
-  "description": "Analyzes web pages for examples of cooptation using LLM analysis",
-  "permissions": [
-    "activeTab",
-    "scripting",
-    "storage"
-  ],
-  "host_permissions": [
-    "https://openrouter.ai/*"
-  ],
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "Analyze Page for Cooptation"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content-script.js"],
-      "css": ["style.css"]
+    "manifest_version": 3,
+    "name": "Cooptation Highlighter",
+    "version": "1.0",
+    "description": "Highlights co-opted language on webpages",
+    "permissions": [
+        "storage",
+        "tabs",
+        "activeTab"
+    ],
+    "host_permissions": [
+        "https://openrouter.ai/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content-script.js"],
+            "css": ["style.css"]
+        }
+    ],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_popup": "popup.html"
     }
-  ]
 }
