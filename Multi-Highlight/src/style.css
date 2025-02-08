@@ -1,0 +1,12 @@
+.cooptation-highlight {
+  background-color: #FFC107;
+  padding: 2px 4px;
+  border-radius: 3px;
+  cursor: help;
+  position: relative;
+  display: inline-block;
+}
+
+.cooptation-highlight:hover {
+  background-color: #FFB300;
+}
